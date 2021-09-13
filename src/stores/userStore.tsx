@@ -15,6 +15,7 @@ export class UserStore {
     }
 
     get(id: number): IUser | undefined {
+        // Dictionary would be better...
         return this._users.find(o => o.id == id);
     }
 

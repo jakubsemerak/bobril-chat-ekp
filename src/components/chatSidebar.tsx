@@ -16,7 +16,7 @@ export class ChatSidebar extends b.Component<IChatSidebarData> {
                 <LSidebar width={SidebarWidth.SmallMedium}>
                     <ChatSidebarHeader avatar={this.data.avatar} name={this.data.name}/>
                     {this.data.contacts.map(item => (
-                        <SidebarItem {...item} />
+                        <SidebarItem {...item}/>
                     ))}
                 </LSidebar>
             </>
