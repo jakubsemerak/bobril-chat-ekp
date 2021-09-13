@@ -3,7 +3,7 @@ import { observable } from "bobx";
 export interface IUser {
     id: number,
     name: string,
-    avatar: string,
+    avatar?: string,
 }
 
 export class UserStore {

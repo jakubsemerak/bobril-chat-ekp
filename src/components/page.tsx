@@ -5,11 +5,14 @@ import {ChatSidebar, IChatSidebarData} from "./chatSidebar";
 import {Chat} from "./chat";
 import {IData as ISidebarData} from "bobwai--sidebar-item/src/data";
 import {IUser, UserStore} from "../stores/userStore";
-import {create as CreateAvatar} from "bobwai--avatar";
+import Avatar, {create as CreateAvatar} from "bobwai--avatar";
 import {observable} from "bobx";
-import {UserChatUriPattern} from "../routes";
+import {IRouteHandlerData} from "bobril";
+import {create as AppHeader} from "bobwai--app-header/src/lib";
+import {create as EmptyState, Size} from "bobwai--empty-state/src/lib";
+import {ChatSidebarHeader} from "./chatSidebarHeader";
+import {create as HeaderText, TextStyle} from "bobwai--header-text/src/lib";
 
-export interface IPageData {
 export interface IPageData extends IRouteHandlerData {
 
 }
@@ -19,6 +22,12 @@ export class Page extends b.Component<IPageData> {
 
     @observable
     private _selectedUser: IUser | undefined;
+
+    constructor() {
+        super();
+
+        this.initDummyData();
+    }
 
     // Just assume that first user is logged in.
     get currentUser(): IUser {
@@ -37,7 +46,7 @@ export class Page extends b.Component<IPageData> {
 
     openChatWithUser(id: number): void {
         if (this.selectUser(id)) {
-            b.runTransition(b.createRedirectPush("chat", { userId: id.toString() }));
+            b.runTransition(b.createRedirectPush("chat", {userId: id.toString()}));
         }
     }
 
@@ -45,10 +54,24 @@ export class Page extends b.Component<IPageData> {
         return this._selectedUser;
     }
 
-    constructor() {
-        super();
+    private renderAvatar(user: IUser | undefined, size: number): b.IBobrilNode {
+        let avatar: b.IBobrilNode = <></>;
 
-        this.initDummyData();
+        if (user) {
+            if (user.avatar) {
+                avatar = (<Avatar imageSrc={user.avatar} size={size}/>);
+            } else {
+                avatar = CreateAvatar({colorSeed: user?.name, size: size});
+            }
+        }
+
+        return avatar;
+    }
+
+    private renderChatHeader(user?: IUser): b.IBobrilNode {
+        return (
+            <HeaderText content={user?.name} leftIcon={this.renderAvatar(user, 32)} textStyle={TextStyle.Subtitle200}/>
+        );
     }
 
     render(data: IPageData): b.IBobrilChildren {
@@ -58,12 +81,17 @@ export class Page extends b.Component<IPageData> {
                     id: o.id.toString(),
                     name: o.name,
                     title: o.name,
-                    iconContent: CreateAvatar({colorSeed: o.name, size: 32}),
+                    iconContent: this.renderAvatar(o, 32),
                     isActive: this.selectedUser?.id == o.id,
                     onClick: () => this.openChatWithUser(o.id),
                 }))} avatar={this.currentUser.avatar} name={this.currentUser.name}
             />
-            <Chat/>
+
+            <LMainView sidebarWidth={SidebarWidth.SmallMedium} isCombinedWithSidebar>
+                <AppHeader theme={2} leftContent={this.renderChatHeader(this.selectedUser)}/>
+                <EmptyState size={Size.Large} message={"No chat selected"}/>
+                {this.data.activeRouteHandler()}
+            </LMainView>
         </>
     }
 
@@ -76,22 +104,18 @@ export class Page extends b.Component<IPageData> {
         this.userStore.add({
             id: 2,
             name: "Hans Becker",
-            avatar: "https://www.w3schools.com/html/img_girl.jpg",
         });
         this.userStore.add({
             id: 3,
             name: "Thomas Wood",
-            avatar: "https://www.w3schools.com/html/img_girl.jpg",
         });
         this.userStore.add({
             id: 4,
             name: "Alen Green",
-            avatar: "https://www.w3schools.com/html/img_girl.jpg",
         });
         this.userStore.add({
             id: 5,
-            name: "Phill Barret",
-            avatar: "https://www.w3schools.com/html/img_girl.jpg",
+            name: "Phil Barret",
         });
     }
 }
