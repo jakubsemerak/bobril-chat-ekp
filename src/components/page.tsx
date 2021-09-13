@@ -10,6 +10,7 @@ import {observable} from "bobx";
 import {UserChatUriPattern} from "../routes";
 
 export interface IPageData {
+export interface IPageData extends IRouteHandlerData {
 
 }
 

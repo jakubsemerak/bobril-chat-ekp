@@ -8,7 +8,7 @@ export class App extends b.Component<b.IRouteHandlerData> {
     render(): b.IBobrilChildren {
         return (
             <>
-                <Page/>
+                <Page {...this.data}/>
             </>
         );
     }
