@@ -5,7 +5,7 @@ import {ChatSidebarHeader} from "./chatSidebarHeader";
 
 export interface IChatSidebarData {
     contacts: ISidebarData[];
-    avatar: string;
+    avatar?: string;
     name: string;
 }
 

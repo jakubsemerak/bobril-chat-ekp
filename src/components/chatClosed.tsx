@@ -1,15 +1,12 @@
 import * as b from "bobril";
 import {IRouteHandlerData} from "bobril";
-
-export interface IChatWindowData {
-    // onSubmit(value: string): void;
-}
+import {create as EmptyState, Size} from "bobwai--empty-state/src/lib";
 
 export class ChatClosed extends b.Component<IRouteHandlerData> {
     render(): b.IBobrilChildren {
         return (
             <>
-                <div>TODO No chat selected.</div>
+                <EmptyState size={Size.Large} message={"No chat selected"}/>
             </>
         );
     }

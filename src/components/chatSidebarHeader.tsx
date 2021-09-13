@@ -5,7 +5,7 @@ import {create as HeaderText, HeadingType, TextStyle} from "bobwai--header-text"
 import Avatar from "bobwai--avatar";
 
 export interface IChatSidebarHeaderData {
-    avatar: string;
+    avatar?: string;
     name: string;
 }
 

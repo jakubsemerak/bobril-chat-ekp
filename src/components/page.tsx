@@ -13,12 +13,14 @@ import {create as EmptyState, Size} from "bobwai--empty-state/src/lib";
 import {ChatSidebarHeader} from "./chatSidebarHeader";
 import {create as HeaderText, TextStyle} from "bobwai--header-text/src/lib";
 
+export const sharedUserStore = new UserStore();
+
 export interface IPageData extends IRouteHandlerData {
 
 }
 
 export class Page extends b.Component<IPageData> {
-    userStore = new UserStore();
+    userStore = sharedUserStore;
 
     @observable
     private _selectedUser: IUser | undefined;
@@ -54,7 +56,8 @@ export class Page extends b.Component<IPageData> {
         return this._selectedUser;
     }
 
-    private renderAvatar(user: IUser | undefined, size: number): b.IBobrilNode {
+    // TODO Avatar component.
+    public static renderAvatar(user: IUser | undefined, size: number): b.IBobrilNode {
         let avatar: b.IBobrilNode = <></>;
 
         if (user) {
@@ -68,9 +71,9 @@ export class Page extends b.Component<IPageData> {
         return avatar;
     }
 
-    private renderChatHeader(user?: IUser): b.IBobrilNode {
+    public static renderChatHeader(user?: IUser): b.IBobrilNode {
         return (
-            <HeaderText content={user?.name} leftIcon={this.renderAvatar(user, 32)} textStyle={TextStyle.Subtitle200}/>
+            <HeaderText content={user?.name} leftIcon={Page.renderAvatar(user, 32)} textStyle={TextStyle.Subtitle200}/>
         );
     }
 
@@ -81,15 +84,13 @@ export class Page extends b.Component<IPageData> {
                     id: o.id.toString(),
                     name: o.name,
                     title: o.name,
-                    iconContent: this.renderAvatar(o, 32),
+                    iconContent: Page.renderAvatar(o, 32),
                     isActive: this.selectedUser?.id == o.id,
                     onClick: () => this.openChatWithUser(o.id),
                 }))} avatar={this.currentUser.avatar} name={this.currentUser.name}
             />
 
             <LMainView sidebarWidth={SidebarWidth.SmallMedium} isCombinedWithSidebar>
-                <AppHeader theme={2} leftContent={this.renderChatHeader(this.selectedUser)}/>
-                <EmptyState size={Size.Large} message={"No chat selected"}/>
                 {this.data.activeRouteHandler()}
             </LMainView>
         </>
