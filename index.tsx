@@ -1,4 +1,7 @@
 import * as b from "bobril";
 import { App } from "./src/app";
+import * as font from "bobwai--font";
+import {initRoutes} from "./src/routes";
 
-b.init(() => <App name={"Stranger"} />);
+font.init();
+initRoutes();

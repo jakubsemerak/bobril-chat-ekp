@@ -17,6 +17,18 @@
   },
   "homepage": "https://github.com/jakubsemerak/bobril-chat-ekp#readme",
   "dependencies": {
-    "bobril": "^17.10.0"
+    "bobril": "^17.10.0",
+    "bobwai--app-header": "^4.0.4",
+    "bobwai--avatar": "^2.1.1",
+    "bobwai--chat": "^9.1.3",
+    "bobwai--empty-state": "^2.2.1",
+    "bobwai--filter": "^6.7.0",
+    "bobwai--font": "^4.1.0",
+    "bobwai--header-text": "^3.7.0",
+    "bobwai--l-view-main": "^3.1.1",
+    "bobwai--l-view-sidebar": "^5.1.1",
+    "bobwai--sidebar": "^2.0.10",
+    "bobwai--sidebar-item": "^6.0.3",
+    "bobx": "^0.29.0"
   }
 }
