@@ -4,8 +4,9 @@ import {create as LMainView} from "bobwai--l-view-main/src/lib";
 import {create as AppHeader} from "bobwai--app-header";
 import {create as EmptyState, Size} from "bobwai--empty-state";
 import {observable} from "bobx";
-import {Page, sharedUserStore} from "./page";
+import {Page} from "./page";
 import {IUser, UserStore} from "../stores/userStore";
+import {sharedUserStore} from "../app";
 
 export interface IChatData extends b.IRouteHandlerData {
     routeParams: { userId?: string };

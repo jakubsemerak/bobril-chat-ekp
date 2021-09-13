@@ -1,19 +1,13 @@
 import * as b from "bobril";
 import {SidebarWidth} from "bobwai--l-view-sidebar/src/lib";
 import {create as LMainView} from "bobwai--l-view-main/src/lib";
-import {ChatSidebar, IChatSidebarData} from "./chatSidebar";
-import {Chat} from "./chat";
-import {IData as ISidebarData} from "bobwai--sidebar-item/src/data";
-import {IUser, UserStore} from "../stores/userStore";
+import {ChatSidebar} from "./chatSidebar";
+import {IUser} from "../stores/userStore";
 import Avatar, {create as CreateAvatar} from "bobwai--avatar";
 import {observable} from "bobx";
 import {IRouteHandlerData} from "bobril";
-import {create as AppHeader} from "bobwai--app-header/src/lib";
-import {create as EmptyState, Size} from "bobwai--empty-state/src/lib";
-import {ChatSidebarHeader} from "./chatSidebarHeader";
 import {create as HeaderText, TextStyle} from "bobwai--header-text/src/lib";
-
-export const sharedUserStore = new UserStore();
+import {sharedUserStore} from "../app";
 
 export interface IPageData extends IRouteHandlerData {
 
