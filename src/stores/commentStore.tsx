@@ -1,12 +1,14 @@
 import {observable} from "bobx";
+import {DateTime} from "../tools";
 
 export interface IComment {
     id?: number,
     text: string,
     from: number,
     to: number,
-    created: string,
+    created?: string,
     replies?: IComment[],
+    isEditable?: boolean;
 }
 
 export class CommentStore {
@@ -20,9 +22,14 @@ export class CommentStore {
         return this._comments;
     }
 
-    get(id: number): IComment | undefined {
+    get(id: number, parentId?: number): IComment | undefined {
         // Dictionary would be better...
-        return this._comments.find(o => o.id == id);
+        if (parentId) {
+            const comments = this._comments.find(o => o.id == parentId);
+            return comments?.replies!.find(o => o.id == id);
+        } else {
+            return this._comments.find(o => o.id == id);
+        }
     }
 
     getCommentsWithUser(currentUserId: number, targetUserId: number | undefined): IComment[] {
@@ -48,19 +55,45 @@ export class CommentStore {
         return false;
     }
 
-    private initComment(comment: IComment) : IComment {
+    private initComment(comment: IComment): IComment {
         if (!comment.id) {
             comment.id = this._id++;
         }
 
-        if (comment.replies === undefined) {
-            comment.replies = [];
-        }
+        comment.replies = comment.replies ?? [];
+        comment.created = comment.created ?? DateTime.now();
+        comment.isEditable = comment.isEditable ?? true;
 
         return comment;
     }
 
-    // edit(index: number, value: boolean): void {
-    //     this._users[index].done = value;
-    // }
+    edit(commentId: number, text: string, parentId?: number): boolean {
+        let editedComment: IComment | undefined;
+
+        if (parentId) {
+            editedComment = this.get(commentId, parentId);
+        } else {
+            editedComment = this.get(commentId);
+        }
+
+        if (editedComment) {
+            editedComment.text = text;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    editReply(commentId: number, text: string, parentId: number): boolean {
+        const editedComment = this.get(commentId, parentId);
+
+        if (editedComment) {
+            editedComment.text = text;
+
+            return true;
+        }
+
+        return false;
+    }
 }

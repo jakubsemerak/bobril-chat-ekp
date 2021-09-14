@@ -1,8 +1,5 @@
 import * as b from "bobril";
-import {SidebarWidth} from "bobwai--l-view-sidebar/src/lib";
-import {create as LMainView} from "bobwai--l-view-main/src/lib";
 import {create as AppHeader} from "bobwai--app-header";
-import {create as EmptyState, Size} from "bobwai--empty-state";
 import {create as ChatContent, IComment as IChatContentComment} from "bobwai--chat"
 import {observable} from "bobx";
 import {Page} from "./page";
@@ -15,6 +12,10 @@ export interface IChatData extends b.IRouteHandlerData {
     routeParams: { userId?: string };
 }
 
+let globalComment: string = "";
+let globalActiveCommentId: number | undefined;
+let globalDefaultCommentId: number;
+
 export class Chat extends b.Component<IChatData> {
     userStore = sharedUserStore;
     commentStore = sharedCommentStore;
@@ -22,18 +23,27 @@ export class Chat extends b.Component<IChatData> {
     @observable
     private _targetUserId: string | undefined = this.data.routeParams.userId;
 
+    @observable
+    public static _comment: string = "";
+
+    @observable
+    public _commentId: number = -1;
+
     get targetUser(): IUser | undefined {
         return this.userStore.get(parseInt(this._targetUserId ?? ""));
     }
 
     private mapComment(comment: IComment): IChatContentComment<number> {
+        const userFrom = this.userStore.get(comment.from);
+
         return {
             id: comment.id!,
-            userName: "",
-            created: comment.created,
+            userName: userFrom!.name,
+            created: comment.created!,
             text: comment.text,
-            icon: <UserAvatar user={this.userStore.get(comment.from)} size={32}/>,
+            icon: <UserAvatar user={userFrom} size={32}/>,
             replies: comment.replies!.map(o => this.mapComment(o)),
+            isEditable: comment.isEditable,
         };
     }
 
@@ -46,7 +56,7 @@ export class Chat extends b.Component<IChatData> {
             <>
                 <AppHeader theme={2} leftContent={Page.renderChatHeader(this.targetUser)}/>
                 <ChatContent
-                    icon={<UserAvatar user={currentUser} size={32}/>}
+                    icon={<UserAvatar user={currentUser} size={30}/>}
                     labels={{
                         submit: "Submit",
                         cancel: "Cancel",
@@ -57,17 +67,62 @@ export class Chat extends b.Component<IChatData> {
                         label: "Social Commenting",
                     }}
                     headerOff
+
+                    placeholderText={"Your comment"}
                     comments={chatComments.map(o => (this.mapComment(o)))}
-                    activeCommentValue={"Hmm?"}
-                    defaultRootCommentId={1}
+                    activeCommentValue={globalComment}
+                    activeCommentId={globalActiveCommentId}
+                    defaultRootCommentId={globalDefaultCommentId}
                     onActiveCommentSubmit={(parentCommentId, text) => {
-                        // TODO.
+                        if (parentCommentId) {
+                            this.commentStore.addReply(parentCommentId, {
+                                from: currentUser.id,
+                                to: targetUser!.id,
+                                text: text,
+                            });
+                        } else {
+                            this.commentStore.add({
+                                from: currentUser.id,
+                                to: targetUser!.id,
+                                text: text,
+                            });
+                        }
                     }}
-                    onChangeActiveCommentId={commentId => {
-                        // TODO
+                    onChangeActiveCommentId={newCommentId => {
+                        globalActiveCommentId = newCommentId;
+
+                        console.log();
+                        b.invalidate();
                     }}
                     onChangeActiveCommentValue={value => {
-                        // TODO
+                        globalComment = value;
+
+                        // TODO is this necessary? What about observable?
+                        b.invalidate();
+                        console.log(globalActiveCommentId);
+                    }}
+
+                    onEditComment={(commentId1, value, parentId) => {
+                        const comment = this.commentStore.get(commentId1, parentId);
+
+                        if (comment?.from != currentUser.id) {
+                            return;
+                        }
+
+                        if (parentId) {
+                            this.commentStore.editReply(commentId1, value, parentId);
+                        } else {
+                            this.commentStore.edit(commentId1, value);
+                        }
+
+                        globalComment = "";
+                        globalActiveCommentId = undefined;
+                        b.invalidate();
+                    }}
+
+                    onCancelComment={() => {
+                        globalActiveCommentId = undefined;
+                        b.invalidate();
                     }}
                 />
             </>
