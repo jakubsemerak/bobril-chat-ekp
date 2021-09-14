@@ -96,6 +96,7 @@ export class Chat extends b.Component<IChatData> {
                     }}
 
                     onChangeActiveCommentValue={value => {
+                        // TODO weird behaviour when replying to comment from DB.
                         globalComment = value;
 
                         // TODO is this necessary? What about observable?

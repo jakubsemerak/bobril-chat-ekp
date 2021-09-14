@@ -20,10 +20,8 @@ export class ChatSidebarHeader extends b.Component<IChatSidebarHeaderData> {
 
                 <Filter placeholder={"Search"} onChange={(v) => {
                     this.data.onFilterChange(v);
-                    b.invalidate();
                 }} onTextClear={() => {
                     this.data.onFilterChange(undefined);
-                    b.invalidate();
                 }}/>
             </>
         );
