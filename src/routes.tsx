@@ -2,7 +2,6 @@ import * as b from "bobril";
 import {App} from "./app";
 import {Chat} from "./components/chat";
 import {ChatClosed} from "./components/chatClosed";
-import {IRouteConfig} from "bobril/src/router";
 
 export function initRoutes() {
     const chat: b.IRouteConfig = {
