@@ -28,12 +28,12 @@ export class Chat extends b.Component<IChatData> {
 
     private mapComment(comment: IComment): IChatContentComment<number> {
         return {
-            id: comment.id,
+            id: comment.id!,
             userName: "",
             created: comment.created,
             text: comment.text,
             icon: <UserAvatar user={this.userStore.get(comment.from)} size={32}/>,
-            replies: [],
+            replies: comment.replies!.map(o => this.mapComment(o)),
         };
     }
 

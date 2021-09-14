@@ -56,21 +56,66 @@ export class App extends b.Component<b.IRouteHandlerData> {
 
     private createComments() {
         sharedCommentStore.add({
-            id: 1,
             from: 1,
             to: 2,
             text: "Question?",
             created: "2021.09.14",
-            replies: [],
         });
 
         sharedCommentStore.add({
-            id: 1,
             from: 2,
             to: 1,
             text: "Reply.",
+            created: "2021.09.15",
+        });
+
+        sharedCommentStore.add({
+            from: 1,
+            to: 2,
+            text: "I am glad that you finally answered.",
+            created: "2021.09.15",
+        });
+
+        sharedCommentStore.add({
+            from: 1,
+            to: 3,
+            text: "Hello, could we test nested replies?",
             created: "2021.09.14",
-            replies: [],
+        });
+
+        sharedCommentStore.addReply(4, {
+            from: 1,
+            to: 3,
+            text: "Do you hear me?",
+            created: "2021.09.14",
+        });
+
+        sharedCommentStore.addReply(4, {
+            from: 1,
+            to: 3,
+            text: "...",
+            created: "2021.09.20",
+        });
+
+        sharedCommentStore.addReply(4, {
+            from: 3,
+            to: 1,
+            text: "Hey, whats the hurry?",
+            created: "2021.09.25",
+        });
+
+        sharedCommentStore.addReply(4, {
+            from: 1,
+            to: 3,
+            text: "OMG! Finally!",
+            created: "2021.09.25",
+        });
+
+        sharedCommentStore.addReply(4, {
+            from: 3,
+            to: 1,
+            text: "Hehe 😊.",
+            created: "2021.10.5",
         });
     }
 }
