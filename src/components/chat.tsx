@@ -7,6 +7,7 @@ import {IUser} from "../stores/userStore";
 import {getCurrentUser, sharedCommentStore, sharedUserStore} from "../app";
 import {UserAvatar} from "./userAvatar";
 import {IComment} from "../stores/commentStore";
+import {debug} from "fun-model/src/debug";
 
 export interface IChatData extends b.IRouteHandlerData {
     routeParams: { userId?: string };
@@ -44,7 +45,7 @@ export class Chat extends b.Component<IChatData> {
             userName: userFrom!.name,
             created: comment.created!,
             text: comment.text,
-            icon: <UserAvatar user={userFrom} size={32}/>,
+            icon: <UserAvatar user={userFrom} size={30}/>,
             replies: comment.replies!.map(o => this.mapComment(o)),
             isEditable: this.currentUser.id == comment.from,
         };
@@ -92,7 +93,6 @@ export class Chat extends b.Component<IChatData> {
                     onChangeActiveCommentId={newCommentId => {
                         globalActiveCommentId = newCommentId;
 
-                        console.log();
                         b.invalidate();
                     }}
                     onChangeActiveCommentValue={value => {
@@ -100,7 +100,6 @@ export class Chat extends b.Component<IChatData> {
 
                         // TODO is this necessary? What about observable?
                         b.invalidate();
-                        console.log(globalActiveCommentId);
                     }}
 
                     onEditComment={(commentId1, value, parentId) => {
@@ -111,13 +110,20 @@ export class Chat extends b.Component<IChatData> {
                         }
 
                         if (parentId) {
-                            this.commentStore.editReply(commentId1, value, parentId);
+                            this.commentStore.edit(commentId1, value, parentId);
                         } else {
                             this.commentStore.edit(commentId1, value);
                         }
 
                         globalComment = "";
                         globalActiveCommentId = undefined;
+                        b.invalidate();
+                    }}
+
+                    onDeleteComment={(commentId, parent) => {
+
+                        // Note: weird, parentId is empty when deleting nested comment.
+                        this.commentStore.delete(commentId, parent);
                         b.invalidate();
                     }}
 

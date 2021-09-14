@@ -22,14 +22,37 @@ export class CommentStore {
         return this._comments;
     }
 
-    get(id: number, parentId?: number): IComment | undefined {
+    private _getIndex(comments: IComment[] | undefined, id: number): number {
         // Dictionary would be better...
-        if (parentId) {
-            const comments = this._comments.find(o => o.id == parentId);
-            return comments?.replies!.find(o => o.id == id);
-        } else {
-            return this._comments.find(o => o.id == id);
+        return comments?.findIndex(o => o.id == id) ?? -1;
+    }
+
+    private _get(comments: IComment[] | undefined, id: number): [comment: IComment | undefined, index: number] {
+        const index = this._getIndex(comments, id);
+        let foundComment: IComment | undefined = undefined;
+
+        if (index != -1 && comments) {
+            foundComment = comments[index];
         }
+
+        return [foundComment, index];
+    }
+
+    get(id: number, parentId?: number): IComment | undefined {
+        let comment = this._get(this._comments, parentId ?? id);
+
+        if (parentId && comment[0]) {
+            comment = this._get(comment[0].replies, id);
+        } else if (!comment) {
+            // When we do not have parentId but we want to look for child comments too.
+            for (let parent of this._comments) {
+                comment = this._get(parent.replies, id);
+
+                if (comment) break;
+            }
+        }
+
+        return comment[0];
     }
 
     getCommentsWithUser(currentUserId: number, targetUserId: number | undefined): IComment[] {
@@ -66,6 +89,35 @@ export class CommentStore {
         return comment;
     }
 
+    private _delete(comments: IComment[], index: number): boolean {
+        if (index < 0) return false;
+
+        return comments.splice(index, 1).length > 0;
+    }
+
+    delete(commentId: number, parentId?: number): boolean {
+        let editedComment = this._get(this._comments, commentId);
+        let index = editedComment[1];
+
+        if (index < 0) {
+            // Child comment removal.
+            for (let parent of this._comments) {
+                let childIndex = this._get(parent.replies, commentId)[1];
+
+                if (childIndex != -1) {
+                    if (this._delete(parent.replies!, childIndex)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            return this._delete(this._comments, index);
+        }
+
+
+        return false;
+    }
+
     edit(commentId: number, text: string, parentId?: number): boolean {
         let editedComment: IComment | undefined;
 
@@ -74,18 +126,6 @@ export class CommentStore {
         } else {
             editedComment = this.get(commentId);
         }
-
-        if (editedComment) {
-            editedComment.text = text;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    editReply(commentId: number, text: string, parentId: number): boolean {
-        const editedComment = this.get(commentId, parentId);
 
         if (editedComment) {
             editedComment.text = text;
