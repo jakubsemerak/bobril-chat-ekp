@@ -67,7 +67,7 @@ export class Page extends b.Component<IPageData> {
 
     public static renderChatHeader(user?: IUser): b.IBobrilNode {
         return (
-            <HeaderText content={user?.name} leftIcon={Page.renderAvatar(user, 32)} textStyle={TextStyle.Subtitle200}/>
+            <HeaderText content={user?.name} leftIcon={<UserAvatar user={user} size={32}/>} textStyle={TextStyle.Subtitle200}/>
         );
     }
 
@@ -78,10 +78,10 @@ export class Page extends b.Component<IPageData> {
                     id: o.id.toString(),
                     name: o.name,
                     title: o.name,
-                    iconContent: Page.renderAvatar(o, 32),
+                    iconContent: <UserAvatar user={o} size={32}/>,
                     isActive: this.selectedUser?.id == o.id,
                     onClick: () => this.openChatWithUser(o.id),
-                }))} avatar={this.currentUser.avatar} name={this.currentUser.name}
+                }))} avatar={getCurrentUser().avatar} name={getCurrentUser().name}
             />
 
             <LMainView sidebarWidth={SidebarWidth.SmallMedium} isCombinedWithSidebar>
