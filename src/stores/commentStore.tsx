@@ -62,7 +62,6 @@ export class CommentStore {
 
         comment.replies = comment.replies ?? [];
         comment.created = comment.created ?? DateTime.now();
-        comment.isEditable = comment.isEditable ?? true;
 
         return comment;
     }

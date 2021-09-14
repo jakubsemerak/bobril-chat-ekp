@@ -3,7 +3,7 @@ import {create as AppHeader} from "bobwai--app-header";
 import {create as ChatContent, IComment as IChatContentComment} from "bobwai--chat"
 import {observable} from "bobx";
 import {Page} from "./page";
-import {IUser, UserStore} from "../stores/userStore";
+import {IUser} from "../stores/userStore";
 import {getCurrentUser, sharedCommentStore, sharedUserStore} from "../app";
 import {UserAvatar} from "./userAvatar";
 import {IComment} from "../stores/commentStore";
@@ -29,6 +29,9 @@ export class Chat extends b.Component<IChatData> {
     @observable
     public _commentId: number = -1;
 
+    get currentUser(): IUser {
+        return getCurrentUser();
+    }
     get targetUser(): IUser | undefined {
         return this.userStore.get(parseInt(this._targetUserId ?? ""));
     }
@@ -43,20 +46,18 @@ export class Chat extends b.Component<IChatData> {
             text: comment.text,
             icon: <UserAvatar user={userFrom} size={32}/>,
             replies: comment.replies!.map(o => this.mapComment(o)),
-            isEditable: comment.isEditable,
+            isEditable: this.currentUser.id == comment.from,
         };
     }
 
     render(): b.IBobrilChildren {
-        const currentUser = getCurrentUser();
-        const targetUser = this.targetUser;
-        const chatComments = this.commentStore.getCommentsWithUser(currentUser.id, targetUser?.id);
+        const chatComments = this.commentStore.getCommentsWithUser(this.currentUser.id, this.targetUser?.id);
 
         return (
             <>
                 <AppHeader theme={2} leftContent={Page.renderChatHeader(this.targetUser)}/>
                 <ChatContent
-                    icon={<UserAvatar user={currentUser} size={30}/>}
+                    icon={<UserAvatar user={this.currentUser} size={30}/>}
                     labels={{
                         submit: "Submit",
                         cancel: "Cancel",
@@ -76,14 +77,14 @@ export class Chat extends b.Component<IChatData> {
                     onActiveCommentSubmit={(parentCommentId, text) => {
                         if (parentCommentId) {
                             this.commentStore.addReply(parentCommentId, {
-                                from: currentUser.id,
-                                to: targetUser!.id,
+                                from: this.currentUser.id,
+                                to: this.targetUser!.id,
                                 text: text,
                             });
                         } else {
                             this.commentStore.add({
-                                from: currentUser.id,
-                                to: targetUser!.id,
+                                from: this.currentUser.id,
+                                to: this.targetUser!.id,
                                 text: text,
                             });
                         }
@@ -105,7 +106,7 @@ export class Chat extends b.Component<IChatData> {
                     onEditComment={(commentId1, value, parentId) => {
                         const comment = this.commentStore.get(commentId1, parentId);
 
-                        if (comment?.from != currentUser.id) {
+                        if (comment?.from != this.currentUser.id) {
                             return;
                         }
 

@@ -57,7 +57,6 @@ export class Page extends b.Component<IPageData> {
     }
 
     render(data: IPageData): b.IBobrilChildren {
-
         return <>
             <ChatSidebar contacts={
                 this.userStore.list.filter(o => o.id != getCurrentUser().id).map(o => ({
