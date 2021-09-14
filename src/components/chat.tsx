@@ -95,12 +95,14 @@ export class Chat extends b.Component<IChatData> {
 
                         b.invalidate();
                     }}
+
                     onChangeActiveCommentValue={value => {
                         globalComment = value;
 
                         // TODO is this necessary? What about observable?
                         b.invalidate();
                     }}
+
 
                     onEditComment={(commentId1, value, parentId) => {
                         const comment = this.commentStore.get(commentId1, parentId);
@@ -123,7 +125,7 @@ export class Chat extends b.Component<IChatData> {
                     onDeleteComment={(commentId, parent) => {
 
                         // Note: weird, parentId is empty when deleting nested comment.
-                        this.commentStore.delete(commentId, parent);
+                        this.commentStore.delete(commentId);
                         b.invalidate();
                     }}
 

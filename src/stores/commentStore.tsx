@@ -95,7 +95,7 @@ export class CommentStore {
         return comments.splice(index, 1).length > 0;
     }
 
-    delete(commentId: number, parentId?: number): boolean {
+    delete(commentId: number): boolean {
         let editedComment = this._get(this._comments, commentId);
         let index = editedComment[1];
 
