@@ -7,7 +7,8 @@ import Avatar, {create as CreateAvatar} from "bobwai--avatar";
 import {observable} from "bobx";
 import {IRouteHandlerData} from "bobril";
 import {create as HeaderText, TextStyle} from "bobwai--header-text/src/lib";
-import {sharedUserStore} from "../app";
+import {sharedUserStore, getCurrentUser} from "../app";
+import {UserAvatar} from "./userAvatar";
 
 export interface IPageData extends IRouteHandlerData {
 
@@ -19,19 +20,8 @@ export class Page extends b.Component<IPageData> {
     @observable
     private _selectedUser: IUser | undefined;
 
-    constructor() {
-        super();
-
-        this.initDummyData();
-    }
-
-    // Just assume that first user is logged in.
-    get currentUser(): IUser {
-        return this.userStore.list[0];
-    }
-
     selectUser(id: number): boolean {
-        if (id != this.currentUser.id) {
+        if (id != getCurrentUser().id) {
             this._selectedUser = this.userStore.get(id);
 
             return true;
@@ -50,21 +40,6 @@ export class Page extends b.Component<IPageData> {
         return this._selectedUser;
     }
 
-    // TODO Avatar component.
-    public static renderAvatar(user: IUser | undefined, size: number): b.IBobrilNode {
-        let avatar: b.IBobrilNode = <></>;
-
-        if (user) {
-            if (user.avatar) {
-                avatar = (<Avatar imageSrc={user.avatar} size={size}/>);
-            } else {
-                avatar = CreateAvatar({colorSeed: user?.name, size: size});
-            }
-        }
-
-        return avatar;
-    }
-
     public static renderChatHeader(user?: IUser): b.IBobrilNode {
         return (
             <HeaderText content={user?.name} leftIcon={<UserAvatar user={user} size={32}/>} textStyle={TextStyle.Subtitle200}/>
@@ -74,7 +49,7 @@ export class Page extends b.Component<IPageData> {
     render(data: IPageData): b.IBobrilChildren {
         return <>
             <ChatSidebar contacts={
-                this.userStore.list.filter(o => o.id != this.currentUser.id).map(o => ({
+                this.userStore.list.filter(o => o.id != getCurrentUser().id).map(o => ({
                     id: o.id.toString(),
                     name: o.name,
                     title: o.name,
@@ -88,29 +63,5 @@ export class Page extends b.Component<IPageData> {
                 {this.data.activeRouteHandler()}
             </LMainView>
         </>
-    }
-
-    private initDummyData() {
-        this.userStore.add({
-            id: 1,
-            name: "John Mitchell",
-            avatar: "https://www.w3schools.com/html/img_girl.jpg",
-        });
-        this.userStore.add({
-            id: 2,
-            name: "Hans Becker",
-        });
-        this.userStore.add({
-            id: 3,
-            name: "Thomas Wood",
-        });
-        this.userStore.add({
-            id: 4,
-            name: "Alen Green",
-        });
-        this.userStore.add({
-            id: 5,
-            name: "Phil Barret",
-        });
     }
 }
