@@ -7,7 +7,6 @@ import {IUser} from "../stores/userStore";
 import {getCurrentUser, sharedCommentStore, sharedUserStore} from "../app";
 import {UserAvatar} from "./userAvatar";
 import {IComment} from "../stores/commentStore";
-import {debug} from "fun-model/src/debug";
 
 export interface IChatData extends b.IRouteHandlerData {
     routeParams: { userId?: string };

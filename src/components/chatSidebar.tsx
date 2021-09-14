@@ -19,8 +19,9 @@ export class ChatSidebar extends b.Component<IChatSidebarData> {
     }
 
     private IsMatch(item: ISidebarData, query: string | undefined): boolean {
-        if (query == undefined) return false;
+        if (query == undefined) return true;
 
+        // Note: does not support accent insensitive search.
         return item.title.toLowerCase().includes(query!.toLowerCase());
     }
 

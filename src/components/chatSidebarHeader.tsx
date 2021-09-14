@@ -1,6 +1,6 @@
 import * as b from "bobril";
 import {create as Filter} from "bobwai--filter";
-import {create as HeaderText, HeadingType, TextStyle} from "bobwai--header-text";
+import {create as HeaderText, TextStyle} from "bobwai--header-text";
 import Avatar from "bobwai--avatar";
 
 export interface IChatSidebarHeaderData {

@@ -3,7 +3,6 @@ import {SidebarWidth} from "bobwai--l-view-sidebar/src/lib";
 import {create as LMainView} from "bobwai--l-view-main/src/lib";
 import {ChatSidebar} from "./chatSidebar";
 import {IUser} from "../stores/userStore";
-import Avatar, {create as CreateAvatar} from "bobwai--avatar";
 import {observable} from "bobx";
 import {IRouteHandlerData} from "bobril";
 import {create as HeaderText, TextStyle} from "bobwai--header-text/src/lib";

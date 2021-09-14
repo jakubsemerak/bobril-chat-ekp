@@ -43,12 +43,12 @@ export class CommentStore {
 
         if (parentId && comment[0]) {
             comment = this._get(comment[0].replies, id);
-        } else if (!comment) {
+        } else if (comment[1] < 0) {
             // When we do not have parentId but we want to look for child comments too.
             for (let parent of this._comments) {
                 comment = this._get(parent.replies, id);
 
-                if (comment) break;
+                if (comment[1] != -1) break;
             }
         }
 
