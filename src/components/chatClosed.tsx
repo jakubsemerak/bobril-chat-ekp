@@ -6,7 +6,7 @@ export class ChatClosed extends b.Component<IRouteHandlerData> {
     render(): b.IBobrilChildren {
         return (
             <>
-                <EmptyState size={Size.Large} message={"No chat selected"}/>
+                <EmptyState size={Size.Large} message={"No chat selected."}/>
             </>
         );
     }

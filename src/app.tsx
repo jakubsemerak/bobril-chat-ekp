@@ -1,11 +1,10 @@
 import * as b from "bobril/index";
-import Avatar, {AvatarIcon} from "bobwai--avatar";
 import {Page} from "./components/page";
-import {ChatSidebar} from "./components/chatSidebar";
-import {Chat} from "./components/chat";
 import {IUser, UserStore} from "./stores/userStore";
+import {CommentStore} from "./stores/commentStore";
 
 export const sharedUserStore = new UserStore();
+export const sharedCommentStore = new CommentStore();
 
 // Just assume that first user is logged in.
 export function getCurrentUser(): IUser {
@@ -17,7 +16,7 @@ export class App extends b.Component<b.IRouteHandlerData> {
         super();
         this.initDummyData();
     }
-    
+
     render(): b.IBobrilChildren {
         return (
             <>
@@ -27,6 +26,11 @@ export class App extends b.Component<b.IRouteHandlerData> {
     }
 
     private initDummyData() {
+        this.createUsers();
+        this.createComments();
+    }
+
+    private createUsers() {
         sharedUserStore.add({
             id: 1,
             name: "John Mitchell",
@@ -47,6 +51,26 @@ export class App extends b.Component<b.IRouteHandlerData> {
         sharedUserStore.add({
             id: 5,
             name: "Phil Barret",
+        });
+    }
+
+    private createComments() {
+        sharedCommentStore.add({
+            id: 1,
+            from: 1,
+            to: 2,
+            text: "Question?",
+            created: "2021.09.14",
+            replies: [],
+        });
+
+        sharedCommentStore.add({
+            id: 1,
+            from: 2,
+            to: 1,
+            text: "Reply.",
+            created: "2021.09.14",
+            replies: [],
         });
     }
 }

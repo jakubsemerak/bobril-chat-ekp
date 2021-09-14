@@ -22,8 +22,4 @@ export class UserStore {
     add(user: IUser): void {
         this._users.push(user);
     }
-
-    // edit(index: number, value: boolean): void {
-    //     this._users[index].done = value;
-    // }
 }
