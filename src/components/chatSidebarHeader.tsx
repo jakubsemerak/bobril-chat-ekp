@@ -6,6 +6,8 @@ import Avatar from "bobwai--avatar";
 export interface IChatSidebarHeaderData {
     avatar?: string;
     name: string;
+
+    onFilterChange(value: string | undefined): void;
 }
 
 export class ChatSidebarHeader extends b.Component<IChatSidebarHeaderData> {
@@ -17,11 +19,10 @@ export class ChatSidebarHeader extends b.Component<IChatSidebarHeaderData> {
                 } textStyle={TextStyle.Subtitle200}/>
 
                 <Filter placeholder={"Search"} onChange={(v) => {
-                    //TODO
-                    console.log(v);
+                    this.data.onFilterChange(v);
                     b.invalidate();
                 }} onTextClear={() => {
-                    //TODO
+                    this.data.onFilterChange(undefined);
                     b.invalidate();
                 }}/>
             </>
