@@ -20,6 +20,15 @@ export class Page extends b.Component<IPageData> {
     @observable
     private _selectedUser: IUser | undefined;
 
+    constructor(props: IPageData) {
+        super(props);
+
+        const userStringId = this.data.routeParams.userId;
+        if (userStringId) {
+            this.selectUser(parseInt(userStringId));
+        }
+    }
+
     selectUser(id: number): boolean {
         if (id != getCurrentUser().id) {
             this._selectedUser = this.userStore.get(id);
@@ -42,11 +51,13 @@ export class Page extends b.Component<IPageData> {
 
     public static renderChatHeader(user?: IUser): b.IBobrilNode {
         return (
-            <HeaderText content={user?.name} leftIcon={<UserAvatar user={user} size={32}/>} textStyle={TextStyle.Subtitle200}/>
+            <HeaderText content={user?.name} leftIcon={<UserAvatar user={user} size={32}/>}
+                        textStyle={TextStyle.Subtitle200}/>
         );
     }
 
     render(data: IPageData): b.IBobrilChildren {
+
         return <>
             <ChatSidebar contacts={
                 this.userStore.list.filter(o => o.id != getCurrentUser().id).map(o => ({
