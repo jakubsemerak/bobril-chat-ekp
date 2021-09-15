@@ -19,6 +19,7 @@ export class Page extends b.Component<IPageData> {
     @observable
     private _selectedUser: IUser | undefined;
 
+
     constructor(props: IPageData) {
         super(props);
 
@@ -48,9 +49,9 @@ export class Page extends b.Component<IPageData> {
         return this._selectedUser;
     }
 
-    public static renderChatHeader(user?: IUser): b.IBobrilNode {
+    public static renderChatHeader(user: IUser): b.IBobrilNode {
         return (
-            <HeaderText content={user?.name} leftIcon={<UserAvatar user={user} size={32}/>}
+            <HeaderText content={user.name} leftIcon={<UserAvatar user={user} size={32}/>}
                         textStyle={TextStyle.Subtitle200}/>
         );
     }

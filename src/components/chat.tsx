@@ -44,7 +44,7 @@ export class Chat extends b.Component<IChatData> {
             userName: userFrom!.name,
             created: comment.created!,
             text: comment.text,
-            icon: <UserAvatar user={userFrom} size={30}/>,
+            icon: <UserAvatar user={userFrom!} size={30}/>,
             replies: comment.replies!.map(o => this.mapComment(o)),
             isEditable: this.currentUser.id == comment.from,
         };
@@ -55,7 +55,7 @@ export class Chat extends b.Component<IChatData> {
 
         return (
             <>
-                <AppHeader theme={2} leftContent={Page.renderChatHeader(this.targetUser)}/>
+                <AppHeader theme={2} leftContent={Page.renderChatHeader(this.targetUser!)}/>
                 <ChatContent
                     icon={<UserAvatar user={this.currentUser} size={30}/>}
                     labels={{
