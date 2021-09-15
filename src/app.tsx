@@ -1,10 +1,10 @@
 import * as b from "bobril/index";
 import {Page} from "./components/page";
 import {IUser, UserStore} from "./stores/userStore";
-import {CommentStore} from "./stores/commentStore";
+import {appContext} from "./appContext"
 
-export const sharedUserStore = new UserStore();
-export const sharedCommentStore = new CommentStore();
+const sharedUserStore = b.useContext(appContext).userStore;
+const sharedCommentStore = b.useContext(appContext).commentStore;
 
 // Just assume that first user is logged in.
 export function getCurrentUser(): IUser {

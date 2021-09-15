@@ -4,9 +4,10 @@ import {create as ChatContent, IComment as IChatContentComment} from "bobwai--ch
 import {observable} from "bobx";
 import {Page} from "./page";
 import {IUser} from "../stores/userStore";
-import {getCurrentUser, sharedCommentStore, sharedUserStore} from "../app";
+import {getCurrentUser} from "../app";
 import {UserAvatar} from "./userAvatar";
 import {IComment} from "../stores/commentStore";
+import {appContext} from "../appContext"
 
 export interface IChatData extends b.IRouteHandlerData {
     routeParams: { userId?: string };
@@ -17,8 +18,9 @@ let globalActiveCommentId: number | undefined;
 let globalDefaultCommentId: number;
 
 export class Chat extends b.Component<IChatData> {
-    userStore = sharedUserStore;
-    commentStore = sharedCommentStore;
+    private context = b.useContext(appContext);
+    userStore = this.context.userStore;
+    commentStore = this.context.commentStore;
 
     @observable
     private _targetUserId: string | undefined = this.data.routeParams.userId;

@@ -8,6 +8,6 @@ export interface IUserAvatarData {
 }
 
 export function UserAvatar(data: IUserAvatarData): b.IBobrilNode {
-    return data.user?.avatar ? <Avatar imageSrc={data.user.avatar} size={data.size}/> :
+    return data.user.avatar ? <Avatar imageSrc={data.user.avatar} size={data.size}/> :
         <Avatar colorSeed={data.user.name} size={data.size}/>
 }

@@ -6,19 +6,20 @@ import {IUser} from "../stores/userStore";
 import {observable} from "bobx";
 import {IRouteHandlerData} from "bobril";
 import {create as HeaderText, TextStyle} from "bobwai--header-text/src/lib";
-import {sharedUserStore, getCurrentUser} from "../app";
+import {getCurrentUser} from "../app";
 import {UserAvatar} from "./userAvatar";
+import {appContext} from "../appContext";
 
 export interface IPageData extends IRouteHandlerData {
 
 }
 
 export class Page extends b.Component<IPageData> {
-    userStore = sharedUserStore;
+    private context = b.useContext(appContext);
+    userStore = this.context.userStore;
 
     @observable
     private _selectedUser: IUser | undefined;
-
 
     constructor(props: IPageData) {
         super(props);
