@@ -25,6 +25,7 @@
     "bobwai--filter": "^6.7.0",
     "bobwai--font": "^4.1.0",
     "bobwai--header-text": "^3.7.0",
+    "bobwai--l-center": "^3.1.0",
     "bobwai--l-view-main": "^3.1.1",
     "bobwai--l-view-sidebar": "^5.1.1",
     "bobwai--sidebar": "^2.0.10",
