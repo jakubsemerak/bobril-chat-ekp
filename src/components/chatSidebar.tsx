@@ -1,5 +1,5 @@
 import * as b from "bobril";
-import {create as LSidebar, SidebarWidth} from "bobwai--l-view-sidebar";
+import {create, create as LSidebar, SidebarWidth} from "bobwai--l-view-sidebar";
 import {create as SidebarItem, IData as ISidebarData} from "bobwai--sidebar-item";
 import {ChatSidebarHeader} from "./chatSidebarHeader";
 import {observable} from "bobx";
@@ -10,25 +10,34 @@ export interface IChatSidebarData {
     name: string;
 }
 
-export function ChatSidebar(data: IChatSidebarData): b.IBobrilNode {
+interface ISimpleFilterData<T> {
+    filter: string | undefined;
+    setFilter: (o: string | undefined) => void;
+    filteredItems: T[];
+}
+
+function useSimpleFilter<T>(items: T[], filterField: (item: T) => string): ISimpleFilterData<T> {
     const [filter, setFilter] = b.useState<string | undefined>("");
+
+    return {
+        filter,
+        setFilter,
+        filteredItems: filter ? items.filter(i => filterField(i).toLowerCase().includes(filter.toLowerCase())) : items,
+    };
+}
+
+export function ChatSidebar(data: IChatSidebarData): b.IBobrilNode {
+    const { filter, setFilter, filteredItems } = useSimpleFilter(data.contacts, item => item.title);
 
     return (
         <>
             <LSidebar width={SidebarWidth.SmallMedium}>
-                <ChatSidebarHeader avatar={data.avatar} name={data.name}
+                <ChatSidebarHeader filter={filter} avatar={data.avatar} name={data.name}
                                    onFilterChange={setFilter}/>
-                {data.contacts.filter(o => isMatch(o, filter)).map(item => (
+                {filteredItems.map(item => (
                     <SidebarItem {...item}/>
                 ))}
             </LSidebar>
         </>
     );
-}
-
-function isMatch(item: ISidebarData, query: string | undefined): boolean {
-    if (query == undefined) return true;
-
-    // Note: does not support accent insensitive search.
-    return item.title.toLowerCase().includes(query!.toLowerCase());
 }

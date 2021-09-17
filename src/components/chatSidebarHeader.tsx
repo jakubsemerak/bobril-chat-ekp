@@ -7,6 +7,7 @@ import {chatSidebarHeaderUserInfoStyle, chatSidebarHeaderWrapperStyle} from "../
 export interface IChatSidebarHeaderData {
     avatar?: string;
     name: string;
+    filter: string | undefined;
 
     onFilterChange(value: string | undefined): void;
 }
@@ -21,7 +22,7 @@ export class ChatSidebarHeader extends b.Component<IChatSidebarHeaderData> {
                             <Avatar imageSrc={this.data.avatar} size={101}/>
                         } textStyle={TextStyle.Subtitle200}/>
                     </div>
-                    <Filter placeholder={"Search"} onChange={(v) => {
+                    <Filter value={this.data.filter} placeholder={"Search"} onChange={(v) => {
                         this.data.onFilterChange(v);
                     }} onTextClear={() => {
                         this.data.onFilterChange(undefined);
