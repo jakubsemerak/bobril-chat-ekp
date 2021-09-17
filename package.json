@@ -30,6 +30,7 @@
     "bobwai--l-view-sidebar": "^5.1.1",
     "bobwai--sidebar": "^2.0.10",
     "bobwai--sidebar-item": "^6.0.3",
-    "bobx": "^0.29.0"
+    "bobx": "^0.29.0",
+    "jasmine": "^3.9.0"
   }
 }
