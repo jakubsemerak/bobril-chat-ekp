@@ -5,11 +5,12 @@ import {ChatSidebarHeader} from "./chatSidebarHeader";
 import {observable} from "bobx";
 
 export interface IChatSidebarData {
-    contacts: ISidebarData[];
+    contacts: ISidebarData[]; // would it be better to pass IUser instead of ISidebarData?
     avatar?: string;
     name: string;
 }
 
+// Can you try to rewrite it to function component with hooks?
 interface ISimpleFilterData<T> {
     filter: string | undefined;
     setFilter: (o: string | undefined) => void;

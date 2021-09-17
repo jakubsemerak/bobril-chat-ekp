@@ -3,6 +3,9 @@ import {Page} from "./components/page";
 import {IUser, UserStore} from "./stores/userStore";
 import {CommentStore} from "./stores/commentStore";
 
+
+// I would remove all global code except getCurrentUser() - getCurrentUser is global in our app, but with extra care
+
 // This probably should not be global, but kept for simplicity.
 export const sharedUserStore = new UserStore();
 export const sharedCommentStore = new CommentStore();

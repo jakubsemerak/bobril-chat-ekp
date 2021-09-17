@@ -22,7 +22,7 @@ export class ChatSidebarHeader extends b.Component<IChatSidebarHeaderData> {
                             <Avatar imageSrc={this.data.avatar} size={101}/>
                         } textStyle={TextStyle.Subtitle200}/>
                     </div>
-                    <Filter value={this.data.filter} placeholder={"Search"} onChange={(v) => {
+                    <Filter value={this.data.filter} placeholder={"Search"} onChange={(v) => { // useless brackets
                         this.data.onFilterChange(v);
                     }} onTextClear={() => {
                         this.data.onFilterChange(undefined);

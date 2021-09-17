@@ -17,7 +17,7 @@ export class Page extends b.Component<IPageData> {
     userStore = sharedUserStore;
 
     @observable
-    private _selectedUser: IUser | undefined;
+    private _selectedUser: IUser | undefined; // should be undefined
 
 
     constructor(props: IPageData) {
@@ -49,7 +49,7 @@ export class Page extends b.Component<IPageData> {
         return this._selectedUser;
     }
 
-    public static renderChatHeader(user: IUser): b.IBobrilNode {
+    public static renderChatHeader(user: IUser): b.IBobrilNode { // why it is here? I would create component ChatHeader instead
         return (
             <HeaderText content={user.name} leftIcon={<UserAvatar user={user} size={32}/>}
                         textStyle={TextStyle.Subtitle200}/>
