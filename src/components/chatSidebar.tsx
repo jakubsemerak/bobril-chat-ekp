@@ -10,36 +10,25 @@ export interface IChatSidebarData {
     name: string;
 }
 
-export class ChatSidebar extends b.Component<IChatSidebarData> {
-    @observable
-    private _filter: string | undefined;
+export function ChatSidebar(data: IChatSidebarData): b.IBobrilNode {
+    const [filter, setFilter] = b.useState<string | undefined>("");
 
-    get contacts(): ISidebarData[] {
-        return this.data.contacts.filter(o => this.IsMatch(o, this._filter));
-    }
+    return (
+        <>
+            <LSidebar width={SidebarWidth.SmallMedium}>
+                <ChatSidebarHeader avatar={data.avatar} name={data.name}
+                                   onFilterChange={setFilter}/>
+                {data.contacts.filter(o => isMatch(o, filter)).map(item => (
+                    <SidebarItem {...item}/>
+                ))}
+            </LSidebar>
+        </>
+    );
+}
 
-    private IsMatch(item: ISidebarData, query: string | undefined): boolean {
-        if (query == undefined) return true;
+function isMatch(item: ISidebarData, query: string | undefined): boolean {
+    if (query == undefined) return true;
 
-        // Note: does not support accent insensitive search.
-        return item.title.toLowerCase().includes(query!.toLowerCase());
-    }
-
-    private setFilter(query: string | undefined) {
-        this._filter = query;
-    }
-
-    render(): b.IBobrilChildren {
-        return (
-            <>
-                <LSidebar width={SidebarWidth.SmallMedium}>
-                    <ChatSidebarHeader avatar={this.data.avatar} name={this.data.name}
-                                       onFilterChange={o => this.setFilter(o)}/>
-                    {this.contacts.map(item => (
-                        <SidebarItem {...item}/>
-                    ))}
-                </LSidebar>
-            </>
-        );
-    }
+    // Note: does not support accent insensitive search.
+    return item.title.toLowerCase().includes(query!.toLowerCase());
 }
