@@ -28,6 +28,9 @@
     "target": "es5",
     "resolveJsonModule": true
   },
+  "files": [
+    "C:/Users/j.semerak/.bbcore/tools/jasmine330.d.ts"
+  ],
   "include": [
     "**/*"
   ]

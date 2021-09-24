@@ -6,29 +6,65 @@ export interface IComment {
     text: string,
     from: number,
     to: number,
-    created?: string,
+    created?: string | undefined, // because observable must be always defined
     replies?: IComment[],
-    isEditable?: boolean;
 }
 
+// TODO: missing tests for comment store
 export class CommentStore {
+
+
+    // Note: two dictionaries could be used:
+    //          { id, comment }, replies { parentCommentId, { id, comment } }
     @observable
     private _comments: IComment[] = [];
 
     // Note: for testing purposes only.
     private _id = 1;
 
+    // This was previously directly in the component but it had only main issue
+    // -> it could not be tested. So it was moved to this place.
+    @observable
+    private _activeCommentId: number | undefined = undefined;
+
+    @observable
+    private _activeCommentValue: string = "";
+
+    // --
+
     get list(): IComment[] {
         return this._comments;
     }
 
-    private _getIndex(comments: IComment[] | undefined, id: number): number {
+    get activeCommentValue(): string {
+        return this._activeCommentValue;
+    }
+
+    set activeCommentValue(value: string) {
+        this._activeCommentValue = value;
+    }
+
+    get activeCommentId(): number | undefined {
+        return this._activeCommentId;
+    }
+
+    set activeCommentId(value: number | undefined) {
+        this._activeCommentId = value;
+    }
+
+    cancelEdit(): void {
+        this._activeCommentValue = "";
+        this._activeCommentId = undefined;
+    }
+
+    // Note: We do not name methods with "_" prefix, just private properties.
+    private getIndex(comments: IComment[] | undefined, id: number): number {
         // Dictionary would be better...
         return comments?.findIndex(o => o.id == id) ?? -1;
     }
 
     private _get(comments: IComment[] | undefined, id: number): [comment: IComment | undefined, index: number] {
-        const index = this._getIndex(comments, id);
+        const index = this.getIndex(comments, id);
         let foundComment: IComment | undefined = undefined;
 
         if (index != -1 && comments) {
@@ -39,12 +75,14 @@ export class CommentStore {
     }
 
     get(id: number, parentId?: number): IComment | undefined {
+        // Note: it is quite complex for the thing it is doing.
         let comment = this._get(this._comments, parentId ?? id);
 
         if (parentId && comment[0]) {
             comment = this._get(comment[0].replies, id);
         } else if (comment[1] < 0) {
             // When we do not have parentId but we want to look for child comments too.
+            // Because theres a bug in the component - we do not get parentId when editing an comment.
             for (let parent of this._comments) {
                 comment = this._get(parent.replies, id);
 
@@ -55,6 +93,8 @@ export class CommentStore {
         return comment[0];
     }
 
+    // TODO: Since currentUser is global, it is not necessary to pass him.
+    // TODO: Computed might be used.
     getCommentsWithUser(currentUserId: number, targetUserId: number | undefined): IComment[] {
         return this._comments.filter(o =>
             (o.from == currentUserId && o.to == targetUserId)
@@ -118,7 +158,7 @@ export class CommentStore {
         return false;
     }
 
-    edit(commentId: number, text: string, parentId?: number): boolean {
+    edit(commentId: number, text: string, parentId?: number | undefined): boolean {
         let editedComment: IComment | undefined;
 
         if (parentId) {
@@ -127,11 +167,14 @@ export class CommentStore {
             editedComment = this.get(commentId);
         }
 
-        if (editedComment) {
-            editedComment.text = text;
-
-            return true;
+        if (!editedComment) {
+            throw `Comment with commentId ${commentId} not found.`;
         }
+
+        editedComment.text = text;
+
+        this._activeCommentId = undefined;
+        this.activeCommentValue = "";
 
         return false;
     }

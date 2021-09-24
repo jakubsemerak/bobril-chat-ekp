@@ -12,26 +12,16 @@ export interface IChatData extends b.IRouteHandlerData {
     routeParams: { userId?: string };
 }
 
-let globalComment: string = "";
-let globalActiveCommentId: number | undefined;
-let globalDefaultCommentId: number;
-
 export class Chat extends b.Component<IChatData> {
     userStore = sharedUserStore;
     commentStore = sharedCommentStore;
 
     @observable
     private _targetUserId: string | undefined = this.data.routeParams.userId;
+    private _currentUser: IUser = getCurrentUser();
 
-    @observable
-    public static _comment: string = "";
+    // Comment content and ID should be inside the store to be testable.
 
-    @observable
-    public _commentId: number = -1;
-
-    get currentUser(): IUser {
-        return getCurrentUser();
-    }
     get targetUser(): IUser | undefined {
         return this.userStore.get(parseInt(this._targetUserId ?? ""));
     }
@@ -46,18 +36,18 @@ export class Chat extends b.Component<IChatData> {
             text: comment.text,
             icon: <UserAvatar user={userFrom!} size={30}/>,
             replies: comment.replies!.map(o => this.mapComment(o)),
-            isEditable: this.currentUser.id == comment.from,
+            isEditable: this._currentUser.id == comment.from,
         };
     }
 
     render(): b.IBobrilChildren {
-        const chatComments = this.commentStore.getCommentsWithUser(this.currentUser.id, this.targetUser?.id);
+        const chatComments = this.commentStore.getCommentsWithUser(this._currentUser.id, this.targetUser?.id);
 
         return (
             <>
                 <AppHeader theme={2} leftContent={Page.renderChatHeader(this.targetUser!)}/>
                 <ChatContent
-                    icon={<UserAvatar user={this.currentUser} size={30}/>}
+                    icon={<UserAvatar user={this._currentUser} size={30}/>}
                     labels={{
                         submit: "Submit",
                         cancel: "Cancel",
@@ -71,68 +61,44 @@ export class Chat extends b.Component<IChatData> {
 
                     placeholderText={"Your comment"}
                     comments={chatComments.map(o => (this.mapComment(o)))}
-                    activeCommentValue={globalComment}
-                    activeCommentId={globalActiveCommentId}
-                    defaultRootCommentId={globalDefaultCommentId}
+                    activeCommentValue={this.commentStore.activeCommentValue}
+                    activeCommentId={this.commentStore.activeCommentId}
+                    defaultRootCommentId={0}
                     onActiveCommentSubmit={(parentCommentId, text) => {
                         if (parentCommentId) {
                             this.commentStore.addReply(parentCommentId, {
-                                from: this.currentUser.id,
+                                from: this._currentUser.id,
                                 to: this.targetUser!.id,
                                 text: text,
                             });
                         } else {
                             this.commentStore.add({
-                                from: this.currentUser.id,
+                                from: this._currentUser.id,
                                 to: this.targetUser!.id,
                                 text: text,
                             });
                         }
                     }}
                     onChangeActiveCommentId={newCommentId => {
-                        globalActiveCommentId = newCommentId;
+                        this.commentStore.activeCommentId = newCommentId;
 
-                        b.invalidate();
                     }}
 
                     onChangeActiveCommentValue={value => {
-                        // TODO weird behaviour when replying to comment from DB.
-                        globalComment = value;
-
-                        // TODO is this necessary? What about observable?
-                        b.invalidate();
+                        this.commentStore.activeCommentValue = value;
                     }}
 
 
                     onEditComment={(commentId1, value, parentId) => {
-                        const comment = this.commentStore.get(commentId1, parentId);
-
-                        if (comment?.from != this.currentUser.id) {
-                            return;
-                        }
-
-                        if (parentId) {
-                            this.commentStore.edit(commentId1, value, parentId);
-                        } else {
-                            this.commentStore.edit(commentId1, value);
-                        }
-
-                        globalComment = "";
-                        globalActiveCommentId = undefined;
-                        b.invalidate();
+                        this.commentStore.edit(commentId1, value, parentId);
                     }}
 
                     onDeleteComment={(commentId, parent) => {
-
-                        // Note: weird, parentId is empty when deleting nested comment.
+                        // Note: weird, parentId is empty when deleting nested comment (its a bug).
                         this.commentStore.delete(commentId);
-                        b.invalidate();
                     }}
 
-                    onCancelComment={() => {
-                        globalActiveCommentId = undefined;
-                        b.invalidate();
-                    }}
+                    onCancelComment={() => this.commentStore.cancelEdit()}
                 />
             </>
         );
