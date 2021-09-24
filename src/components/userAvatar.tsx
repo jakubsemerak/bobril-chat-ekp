@@ -5,7 +5,6 @@ import {IUser} from "../stores/userStore";
 export interface IUserAvatarData {
     user: IUser;
     size: number;
-
 }
 
 export function UserAvatar(data: IUserAvatarData): b.IBobrilNode {

@@ -49,14 +49,6 @@ export class Page extends b.Component<IPageData> {
         return this._selectedUser;
     }
 
-    // TODO: why it is here? I would create component ChatHeader instead
-    public static renderChatHeader(user: IUser): b.IBobrilNode {
-        return (
-            <HeaderText content={user.name} leftIcon={<UserAvatar user={user} size={32}/>}
-                        textStyle={TextStyle.Subtitle200}/>
-        );
-    }
-
     render(data: IPageData): b.IBobrilChildren {
         return <>
             <ChatSidebar contacts={

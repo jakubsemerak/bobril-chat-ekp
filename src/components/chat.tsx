@@ -7,6 +7,7 @@ import {IUser} from "../stores/userStore";
 import {getCurrentUser, sharedCommentStore, sharedUserStore} from "../app";
 import {UserAvatar} from "./userAvatar";
 import {IComment} from "../stores/commentStore";
+import {ChatHeader} from "./chatHeader";
 
 export interface IChatData extends b.IRouteHandlerData {
     routeParams: { userId?: string };
@@ -45,7 +46,7 @@ export class Chat extends b.Component<IChatData> {
 
         return (
             <>
-                <AppHeader theme={2} leftContent={Page.renderChatHeader(this.targetUser!)}/>
+                <AppHeader theme={2} leftContent={<ChatHeader user={this.targetUser!}/>}/>
                 <ChatContent
                     icon={<UserAvatar user={this._currentUser} size={30}/>}
                     labels={{
